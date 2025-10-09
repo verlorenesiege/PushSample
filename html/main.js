@@ -69,6 +69,7 @@ async function main() {
                 console.log('プッシュ通知の購読に成功しました:', subscription);
 
                 // 7. 購読情報をサーバーに送信して保存
+                console.log(JSON.stringify(subscription));
                 await sendSubscriptionToServer(subscription);
                 console.log('購読情報をサーバーに送信しました。');
 
