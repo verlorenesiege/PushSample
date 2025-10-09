@@ -1,7 +1,11 @@
 // VAPIDの公開鍵。サーバーサイドで生成されたものをここに設定します。
 // この鍵は、アプリケーションサーバーが正規のものであることをプッシュサービスに証明するために使用されます。
-const VAPID_PRIVATE_KYE = 'dgDATCxnfyLjh7SkCg_bSeuUbaufS1PDMHYOyW1qGBE';
-const VAPID_PUBLIC_KEY = 'BMD8lbQt2rlu-2vmeO2RPOGUAsH6K49mO3QLDIObmi0HE2ZEmPMAkVVZktOIhepK6dfeba8Nm88PgkB4MAyI0g0'; // 必ずサーバーで生成した公開鍵に置き換えてください
+//const VAPID_PRIVATE_KYE = 'dgDATCxnfyLjh7SkCg_bSeuUbaufS1PDMHYOyW1qGBE';
+//const VAPID_PUBLIC_KEY = 'BMD8lbQt2rlu-2vmeO2RPOGUAsH6K49mO3QLDIObmi0HE2ZEmPMAkVVZktOIhepK6dfeba8Nm88PgkB4MAyI0g0'; // 必ずサーバーで生成した公開鍵に置き換えてください
+
+const VAPID_PUBLIC_KEY = 'BCrMZpWrJhviBTe76eDmqd9kOGxnHZeIS-iPNGBvd6KjhcLlN6jIprlXLJ519j3B3QybhoNxx3d_AzC-zKiigec';
+const VAPID_PRIVATE_KYE = 'Ve_SCxfZxHNI5ElUXP4suC30mBqM9PizvAWxdWGMcSI';
+
 
 /**
  * URL-safe Base64文字列をUint8Arrayに変換するヘルパー関数
