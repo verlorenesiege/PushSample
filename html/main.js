@@ -64,7 +64,7 @@ async function main() {
                 // 6. プッシュ通知の購読を開始
                 const subscription = await registration.pushManager.subscribe({
                     userVisibleOnly: true, // すべてのプッシュ通知がユーザーに見えることを保証
-                    applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) // VAPID公開鍵
+                    applicationServerKey: VAPID_PUBLIC_KEY // VAPID公開鍵
                 });
                 console.log('プッシュ通知の購読に成功しました:', subscription);
 
