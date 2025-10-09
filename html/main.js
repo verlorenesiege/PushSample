@@ -77,6 +77,7 @@ async function main() {
                 subscribeButton.disabled = true;
 
             } catch (error) {
+                console.error(error);
                 console.error('プッシュ通知の購読に失敗しました:', error);
             }
         });
