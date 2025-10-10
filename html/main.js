@@ -64,7 +64,6 @@ async function main() {
                     return;
                 }
                 console.log('通知の許可が得られました。');
-                console.log(urlBase64ToUint8Array(VAPID_PUBLIC_KEY));
 
                 // 6. プッシュ通知の購読を開始
                 const subscription = await registration.pushManager.subscribe({
@@ -74,12 +73,11 @@ async function main() {
                 console.log('プッシュ通知の購読に成功しました:', subscription);
 
                 // 7. 購読情報をサーバーに送信して保存
-                console.log(JSON.stringify(subscription));
                 await sendSubscriptionToServer(subscription);
                 console.log('購読情報をサーバーに送信しました。');
 
                 subscribeButton.textContent = '購読済み';
-                subscribeButton.disabled = true;
+                //subscribeButton.disabled = true;
 
             } catch (error) {
                 console.error(error);
@@ -97,7 +95,6 @@ async function main() {
  * @param {PushSubscription} subscription
  */
 async function sendSubscriptionToServer(subscription) {
-    console.log(subscription);
     const response = await fetch('/api/save-subscription', {
         method: 'POST',
         headers: {
@@ -105,7 +102,7 @@ async function sendSubscriptionToServer(subscription) {
         },
         body: JSON.stringify(subscription),
     });
-
+    console.log(response)
     if (!response.ok) {
         throw new Error('サーバーへの購読情報の送信に失敗しました。');
     }

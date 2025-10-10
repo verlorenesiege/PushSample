@@ -46,11 +46,13 @@ public class HttpTrigger1
         } catch (WebPushException exception)
         {
             _logger.LogInformation(exception.Message);
+            return new OkObjectResult(exception.Message);
 
         }
         catch (Exception e)
         {
             _logger.LogInformation(e.Message);
+            return new OkObjectResult(e.Message);
         }
         _logger.LogInformation("C# HTTP trigger function processed a request.");
         return new OkObjectResult("Welcome to Azure Functions!");
