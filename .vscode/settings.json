@@ -3,5 +3,12 @@
     "azureFunctions.projectLanguage": "C#",
     "azureFunctions.projectRuntime": "~4",
     "debug.internalConsoleOptions": "neverOpen",
-    "azureFunctions.preDeployTask": "publish (functions)"
+    "azureFunctions.preDeployTask": "publish (functions)",
+    "liveServer.settings.port": 5500,  // Live Serverのポート設定
+    "liveServer.settings.root": "/html",  // ルートディレクトリの設定
+    "liveServer.settings.proxy": {  // プロキシ設定の開始
+        "enable": true,  // プロキシ機能を有効化
+        "baseUri": "/api",  // プロキシするパスのプレフィックス
+        "proxyUri": "http://localhost:7270/api",  // リクエストの転送先
+    }
 }

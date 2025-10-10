@@ -5,6 +5,8 @@
 self.addEventListener('push', (event) => {
     console.log(' プッシュイベントを受信しました。');
 
+    consloe.log('push event')
+    consloe.log(event)
     let data;
     try {
         // プッシュイベントのペイロードをJSONとして解析
@@ -21,8 +23,8 @@ self.addEventListener('push', (event) => {
     const title = data.title || '通知';
     const options = {
         body: data.body || '新しいメッセージがあります。',
-        icon: data.icon || '/images/icon-192x192.png', // 通知に表示されるアイコン
-        badge: data.badge || '/images/badge-72x72.png', // モバイルのステータスバーなどに表示される小さなアイコン
+        //icon: data.icon || '/images/icon-192x192.png', // 通知に表示されるアイコン
+        //badge: data.badge || '/images/badge-72x72.png', // モバイルのステータスバーなどに表示される小さなアイコン
         tag: 'push-notification-tag', // 同じタグを持つ通知は上書きされ、スパムを防ぐ
         data: {
             url: data.url || '/' // 通知クリック時に開くURL
