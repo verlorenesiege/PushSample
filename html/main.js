@@ -98,7 +98,7 @@ async function main() {
  */
 async function sendSubscriptionToServer(subscription) {
     console.log(subscription);
-    const response = await fetch('/save-subscription', {
+    const response = await fetch('/api/save-subscription', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
