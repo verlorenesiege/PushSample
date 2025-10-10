@@ -102,8 +102,7 @@ async function sendSubscriptionToServer(subscription) {
         },
         body: JSON.stringify(subscription),
     });
-    console.log(response)
-    console.log(response.body.text())
+
     if (!response.ok) {
         throw new Error('サーバーへの購読情報の送信に失敗しました。');
     }
