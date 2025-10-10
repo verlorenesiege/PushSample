@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using WebPush;
@@ -11,9 +12,9 @@ namespace Company.Function;
 public class HttpTrigger1
 {
     private readonly ILogger<HttpTrigger1> _logger;
+    private static readonly string VAPID_SUBJECT = "mailto:verlorenesiege@gmail.com";
     private static readonly string VAPID_PUBLIC_KEY = "BCrMZpWrJhviBTe76eDmqd9kOGxnHZeIS-iPNGBvd6KjhcLlN6jIprlXLJ519j3B3QybhoNxx3d_AzC-zKiigec";
     private static readonly string VAPID_PRIVATE_KYE = "Ve_SCxfZxHNI5ElUXP4suC30mBqM9PizvAWxdWGMcSI";
-    private static readonly string VAPID_SUBJECT = "mailto:verlorenesiege@gmail.com";
 
     public HttpTrigger1(ILogger<HttpTrigger1> logger)
     {
@@ -32,15 +33,15 @@ public class HttpTrigger1
 
             _logger.LogInformation("Endpoint : " + sub.endpoint);
             _logger.LogInformation("Keys.p256dh : " + sub.keys.p256dh);
-            _logger.LogInformation("Keys.auth : " + sub.keys.p256dh);
+            _logger.LogInformation("Keys.auth : " + sub.keys.auth);
 
-            var subscription = new PushSubscription(sub.endpoint, sub.keys.p256dh, sub.keys.p256dh);
+            var subscription = new PushSubscription(sub.endpoint, sub.keys.p256dh, sub.keys.auth);
 
             var options = new Dictionary<string, object>();
             options["vapidDetails"] = new VapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KYE);
             //options["gcmAPIKey"] = @"[your key here]";
 
-             var payload = JsonConvert.SerializeObject(
+            var payload1 = JsonConvert.SerializeObject(
                         new Dictionary<string, object>
                         {
                             { "title", "Push‘a’Ê" },
@@ -48,9 +49,9 @@ public class HttpTrigger1
                         },
                         Formatting.Indented
                  );
-            _logger.LogInformation(payload);
+            _logger.LogInformation(payload1);
             var webPushClient = new WebPushClient();
-            await webPushClient.SendNotificationAsync(subscription, payload, options);
+            await webPushClient.SendNotificationAsync(subscription, payload1, options);
 
 
         } catch (WebPushException exception)
