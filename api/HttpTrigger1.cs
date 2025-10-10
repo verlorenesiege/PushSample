@@ -2,10 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using System;
-using System.Text;
+using System.Text.Json;
 using WebPush;
 
 namespace Company.Function;
@@ -30,7 +27,7 @@ public class HttpTrigger1
 
         try
         {
-            Subscribe sub = JsonConvert.DeserializeObject<Subscribe>(requestBody);
+            Subscribe sub = JsonSerializer.Deserialize<Subscribe>(requestBody);
 
             _logger.LogInformation("Endpoint : " + sub.endpoint);
             _logger.LogInformation("Keys.p256dh : " + sub.keys.p256dh);
@@ -42,23 +39,13 @@ public class HttpTrigger1
             options["vapidDetails"] = new VapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KYE);
             //options["gcmAPIKey"] = @"[your key here]";
 
-            var payload1 = JsonConvert.SerializeObject(
-                        new Dictionary<string, object>
-                        {
-                            { "title", "Pushëaí " },
-                            { "body", "ëaí ê¨å˜"}
-                        },
-                        Formatting.Indented
-                 );
-            _logger.LogInformation(payload1);
 
-            var shiftjis = Encoding.GetEncoding("Shift-JIS");
-            byte[] shiftJisBytes = shiftjis.GetBytes(payload1);
-            byte[] utf8Bytes = Encoding.Convert(shiftjis, Encoding.UTF8, shiftJisBytes);
-            var payloadUTF8 = Encoding.UTF8.GetString(utf8Bytes);
+            var payLoadObj = new PayLoad { title = "Pushëaí ", body = "ëaí ê¨å˜" };
+            string payloadStr = JsonSerializer.Serialize(payLoadObj);
+            _logger.LogInformation(payloadStr);
 
             var webPushClient = new WebPushClient();
-            await webPushClient.SendNotificationAsync(subscription, payload1, options);
+            await webPushClient.SendNotificationAsync(subscription, payloadStr, options);
 
 
         } catch (WebPushException exception)
@@ -74,6 +61,11 @@ public class HttpTrigger1
         }
         _logger.LogInformation("C# HTTP trigger function processed a request.");
         return new OkObjectResult("Pushí ímëóêM");
+    }
+
+    class PayLoad { 
+        public required string title { get; set; }
+        public required string body { get; set; }
     }
     class Subscribe { 
 
