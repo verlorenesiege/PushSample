@@ -13,6 +13,7 @@ public class HttpTrigger1
     private static readonly string VAPID_PUBLIC_KEY = "BCrMZpWrJhviBTe76eDmqd9kOGxnHZeIS-iPNGBvd6KjhcLlN6jIprlXLJ519j3B3QybhoNxx3d_AzC-zKiigec";
     private static readonly string VAPID_PRIVATE_KYE = "Ve_SCxfZxHNI5ElUXP4suC30mBqM9PizvAWxdWGMcSI";
     private static readonly string VAPID_SUBJECT = "mailto:verlorenesiege@gmail.com";
+    private static readonly string VAPID_PAYLOAD = "Push通知　疎通";
 
     public HttpTrigger1(ILogger<HttpTrigger1> logger)
     {
@@ -40,7 +41,7 @@ public class HttpTrigger1
             //options["gcmAPIKey"] = @"[your key here]";
 
             var webPushClient = new WebPushClient();
-            await webPushClient.SendNotificationAsync(subscription, "payload", options);
+            await webPushClient.SendNotificationAsync(subscription, VAPID_PAYLOAD, options);
 
 
         } catch (WebPushException exception)
@@ -55,7 +56,7 @@ public class HttpTrigger1
             return new OkObjectResult(e.Message);
         }
         _logger.LogInformation("C# HTTP trigger function processed a request.");
-        return new OkObjectResult("Welcome to Azure Functions!");
+        return new OkObjectResult("Push通知送信");
     }
     class Subscribe { 
 

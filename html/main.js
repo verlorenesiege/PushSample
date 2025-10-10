@@ -49,7 +49,7 @@ async function main() {
         const existingSubscription = await registration.pushManager.getSubscription();
         if (existingSubscription) {
             console.log('既に購読済みです。');
-            subscribeButton.textContent = '購読解除する'; // 簡単な例として。解除ロジックは別途実装が必要。
+            //subscribeButton.textContent = '購読解除する'; // 簡単な例として。解除ロジックは別途実装が必要。
             //subscribeButton.disabled = true; // このサンプルでは解除は実装しない
         }
 
@@ -95,7 +95,7 @@ async function main() {
  * @param {PushSubscription} subscription
  */
 async function sendSubscriptionToServer(subscription) {
-    const response = await fetch('https://localhost:7270/api/save-subscription', {
+    const response = await fetch('/api/save-subscription', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
