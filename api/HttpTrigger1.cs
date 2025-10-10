@@ -40,7 +40,7 @@ public class HttpTrigger1
             //options["gcmAPIKey"] = @"[your key here]";
 
 
-            var payLoadObj = new PayLoad { title = "Push‘a’Ê", body = "‘a’Ê¬Œ÷" };
+            var payLoadObj = new PayLoad { title = "Pushç–é€š", body = "ç–é€šæˆåŠŸ" };
             string payloadStr = JsonSerializer.Serialize(payLoadObj);
             _logger.LogInformation(payloadStr);
 
@@ -60,7 +60,7 @@ public class HttpTrigger1
             return new OkObjectResult(e.Message);
         }
         _logger.LogInformation("C# HTTP trigger function processed a request.");
-        return new OkObjectResult("Push’Ê’m‘—M");
+        return new OkObjectResult("Pushé€šçŸ¥é€ä¿¡");
     }
 
     class PayLoad { 
