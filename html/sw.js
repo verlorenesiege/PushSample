@@ -4,8 +4,6 @@
  */
 self.addEventListener('push', (event) => {
     console.log(' プッシュイベントを受信しました。');
-
-    consloe.log('push event')
     consloe.log(event)
     let data;
     try {
