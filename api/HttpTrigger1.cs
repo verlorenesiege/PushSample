@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
+using System.Text;
 using WebPush;
 
 namespace Company.Function;
@@ -50,6 +51,12 @@ public class HttpTrigger1
                         Formatting.Indented
                  );
             _logger.LogInformation(payload1);
+
+            var shiftjis = Encoding.GetEncoding("Shift-JIS");
+            byte[] shiftJisBytes = shiftjis.GetBytes(payload1);
+            byte[] utf8Bytes = Encoding.Convert(shiftjis, Encoding.UTF8, shiftJisBytes);
+            var payloadUTF8 = Encoding.UTF8.GetString(utf8Bytes);
+
             var webPushClient = new WebPushClient();
             await webPushClient.SendNotificationAsync(subscription, payload1, options);
 
