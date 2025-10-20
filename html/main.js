@@ -56,25 +56,68 @@ async function main() {
         // 4. 購読ボタンのクリックイベントを設定
         subscribeButton.addEventListener('click', async () => {
             try {
+                //ログを削除
+                let logElm = document.getElementById('log');
+                logElm.replaceChildren();
+
                 // 5. 通知の許可をユーザーに要求
                 // ユーザーの操作（クリック）に応じて許可を求めるのがベストプラクティス
                 const permission = await Notification.requestPermission();
                 if (permission!== 'granted') {
                     console.error('通知の許可が得られませんでした。');
+
+                    const newDiv = document.createElement("div");
+                    const newContent = document.createTextNode("通知の許可が得られませんでした");
+                    newDiv.appendChild(newContent);
+                    logElm.append(newDiv)
+
                     return;
                 }
                 console.log('通知の許可が得られました。');
+                let newDiv = document.createElement("div");
+                let newContent = document.createTextNode("通知の許可が得られました");
+                newDiv.appendChild(newContent);
+                logElm.append(newDiv)
 
                 // 6. プッシュ通知の購読を開始
-                const subscription = await registration.pushManager.subscribe({
-                    userVisibleOnly: true, // すべてのプッシュ通知がユーザーに見えることを保証
-                    applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) // VAPID公開鍵
-                });
-                console.log('プッシュ通知の購読に成功しました:', subscription);
+                let subscription = "";
+                try {
+                    subscription = await registration.pushManager.subscribe({
+                        userVisibleOnly: true, // すべてのプッシュ通知がユーザーに見えることを保証
+                        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) // VAPID公開鍵
+                    });
+                    console.log('端末識別子を取得', subscription);
+                    newDiv = document.createElement("div");
+                    newContent = document.createTextNode("FCMから端末情報を取得しました");
+                    newDiv.appendChild(newContent);
+                    logElm.append(newDiv)
 
-                // 7. 購読情報をサーバーに送信して保存
-                await sendSubscriptionToServer(subscription);
-                console.log('購読情報をサーバーに送信しました。');
+                    // 7. 購読情報をサーバーに送信して保存
+                    try {
+                        await sendSubscriptionToServer(subscription);
+                        newDiv = document.createElement("div");
+                        newContent = document.createTextNode("端末情報をサーバーに送信しました");
+                        newDiv.appendChild(newContent);
+                        logElm.append(newDiv)
+
+                    } catch (e) {
+                        newDiv = document.createElement("div");
+                        newContent = document.createTextNode("端末情報をサーバーに送信するのに失敗しました");
+                        newDiv.appendChild(newContent);
+                        logElm.append(newDiv)
+
+                    }
+                    console.log('購読情報をサーバーに送信しました。');
+
+
+                } catch(e) {
+                    console.log('端末識別子を取得失敗',e);
+                    newDiv = document.createElement("div");
+                    newContent = document.createTextNode("FCMから端末情報を取得に失敗しました");
+                    newDiv.appendChild(newContent);
+                    logElm.append(newDiv)
+                }
+
 
                 subscribeButton.textContent = '購読済み';
                 //subscribeButton.disabled = true;
