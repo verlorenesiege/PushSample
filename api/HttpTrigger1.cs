@@ -61,7 +61,7 @@ public class HttpTrigger1
             //const string YourAppPassword = ""; // 生成した16桁のアプリパスワード
 
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("送信者名", YourEmail));
+            message.From.Add(new MailboxAddress("Push疎通システム", YourEmail));
             message.To.Add(new MailboxAddress("宛先名", "nobuhiro-miyamoto@exa-corp.co.jp")); // 宛先
             message.Subject = "Push通知送信履歴";
 
