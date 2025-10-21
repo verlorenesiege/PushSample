@@ -89,6 +89,15 @@ async function main() {
                     console.log('端末識別子を取得', subscription);
                     newDiv = document.createElement("div");
                     newContent = document.createTextNode("FCMから端末情報を取得しました");
+
+                    newDiv = document.createElement("div");
+                    newContent = document.createTextNode("端末情報");
+
+                    const jsonString = JSON.stringify(subscription)
+
+                    newDiv = document.createElement("div");
+                    newContent = document.createTextNode(jsonString);
+
                     newDiv.appendChild(newContent);
                     logElm.append(newDiv)
 
