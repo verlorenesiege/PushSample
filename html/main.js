@@ -98,9 +98,9 @@ async function main() {
                     newDiv.appendChild(newContent);
                     logElm.append(newDiv)
 
-                    const jsonString = JSON.stringify(subscription)
+                    const jsonString = JSON.stringify(subscription, null, "\t")
 
-                    newDiv = document.createElement("div");
+                    newDiv = document.createElement("pre");
                     newContent = document.createTextNode(jsonString);
                     newDiv.appendChild(newContent);
                     logElm.append(newDiv)
