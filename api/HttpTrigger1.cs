@@ -1,9 +1,10 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
 using MimeKit;
 using System.Text.Json;
 using WebPush;
@@ -26,11 +27,15 @@ public class HttpTrigger1
     {
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         _logger.LogInformation("requestBody : " + requestBody);
+        Subscribe sub = new Subscribe() { 
+            endpoint = "",
+            expirationTime = "",
+            keys = new Keys() { p256dh = "", auth = "" }
+        };
 
         try
         {
-            Subscribe sub = JsonSerializer.Deserialize<Subscribe>(requestBody);
-
+            sub = JsonSerializer.Deserialize<Subscribe>(requestBody);
             _logger.LogInformation("Endpoint : " + sub.endpoint);
             _logger.LogInformation("Keys.p256dh : " + sub.keys.p256dh);
             _logger.LogInformation("Keys.auth : " + sub.keys.auth);
@@ -50,62 +55,89 @@ public class HttpTrigger1
             await webPushClient.SendNotificationAsync(subscription, payloadStr, options);
 
 
-
-            // --- Gmail設定 ---
-            const string SmtpHost = "smtp.gmail.com";
-            const int SmtpPort = 587; // STARTTLS用のポート
-            const string YourEmail = "verlorenesiege@gmail.com"; // あなたのGmailアドレス
+            await SendMail(sub, "Success");
 
 
-            string YourAppPassword = Environment.GetEnvironmentVariable("APPL_KEY", EnvironmentVariableTarget.Process);
-            //const string YourAppPassword = ""; // 生成した16桁のアプリパスワード
-
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Push疎通システム", YourEmail));
-            message.To.Add(new MailboxAddress("宛先名", "nobuhiro-miyamoto@exa-corp.co.jp")); // 宛先
-            message.Subject = "Push通知送信履歴";
-
-
-            var end_point = "end_point : " + sub.endpoint;
-            var p256dh    = "p256dh    : " + sub.keys.p256dh;
-            var auth      = "auth      : " + sub.keys.auth;
-
-            message.Body = new TextPart("plain")
-            {
-                Text = "送信先端末情報\n" + 
-                       end_point + "\n" +
-                       p256dh + "\n" +
-                       auth + "\n"
-            };
-            using (var client = new SmtpClient())
-            {
-                // SMTPサーバーに接続 (STARTTLSを使用)
-                await client.ConnectAsync(SmtpHost, SmtpPort, SecureSocketOptions.StartTls);
-
-                // 認証
-                await client.AuthenticateAsync(YourEmail, YourAppPassword);
-
-                _logger.LogInformation("メールを送信しています...");
-                await client.SendAsync(message);
-                _logger.LogInformation("メールを送信しました。");
-
-                await client.DisconnectAsync(true);
-            }
-
-
-        } catch (WebPushException exception)
+        } catch (WebPushException e)
         {
-            _logger.LogInformation(exception.Message);
-            return new OkObjectResult(exception.Message);
+            _logger.LogInformation(e.Message);
+            await SendMail(sub, e.Message);
+            return new OkObjectResult(e.Message);
 
         }
         catch (Exception e)
         {
             _logger.LogInformation(e.Message);
+            await SendMail(sub, e.Message);
             return new OkObjectResult(e.Message);
         }
+
+
+
+
+
         _logger.LogInformation("C# HTTP trigger function processed a request.");
         return new OkObjectResult("Push通知送信");
+    }
+
+    private async Task SendMail(Subscribe sub, String resultMsg) {
+        // --- Gmail設定 ---
+        const string SmtpHost = "smtp.gmail.com";
+        const int SmtpPort = 587; // STARTTLS用のポート
+        const string YourEmail = "verlorenesiege@gmail.com"; // あなたのGmailアドレス
+
+
+        string YourAppPassword = Environment.GetEnvironmentVariable("APPL_KEY", EnvironmentVariableTarget.Process);
+        //const string YourAppPassword = ""; // 生成した16桁のアプリパスワード
+
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress("Push疎通システム", YourEmail));
+        message.To.Add(new MailboxAddress("宛先名", "nobuhiro-miyamoto@exa-corp.co.jp")); // 宛先
+        message.Subject = "Push通知送信履歴";
+
+        if (sub == null)
+        {
+            sub = new Subscribe()
+            {
+                endpoint = "",
+                expirationTime = "",
+                keys = new Keys() { p256dh = "", auth = "" }
+            };
+        }
+        else if (sub.keys == null)
+        {
+            sub.keys = new Keys() { p256dh = "", auth = "" };
+        }
+
+            var end_point = "end_point : " + sub.endpoint;
+        var p256dh = "p256dh    : " + sub.keys.p256dh;
+        var auth = "auth      : " + sub.keys.auth;
+
+        message.Body = new TextPart("plain")
+        {
+            Text = "送信先端末情報\n" +
+                   end_point + "\n" +
+                   p256dh + "\n" +
+                   auth + "\n" +
+                   "送信結果\n" +
+                   resultMsg
+        };
+        using (var client = new SmtpClient())
+        {
+            // SMTPサーバーに接続 (STARTTLSを使用)
+            await client.ConnectAsync(SmtpHost, SmtpPort, SecureSocketOptions.StartTls);
+
+            // 認証
+            await client.AuthenticateAsync(YourEmail, YourAppPassword);
+
+            _logger.LogInformation("メールを送信しています...");
+            await client.SendAsync(message);
+            _logger.LogInformation("メールを送信しました。");
+
+            await client.DisconnectAsync(true);
+        }
+
+        return;
     }
 
     class PayLoad { 
