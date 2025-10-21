@@ -40,8 +40,7 @@ public class HttpTrigger1
             _logger.LogInformation("Keys.p256dh : " + sub.keys.p256dh);
             _logger.LogInformation("Keys.auth : " + sub.keys.auth);
 
-            //var subscription = new PushSubscription(sub.endpoint, sub.keys.p256dh, sub.keys.auth);
-            var subscription = new PushSubscription(sub.endpoint, sub.keys.p256dh, "");
+            var subscription = new PushSubscription(sub.endpoint, sub.keys.p256dh, sub.keys.auth);
 
             var options = new Dictionary<string, object>();
             options["vapidDetails"] = new VapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KYE);
